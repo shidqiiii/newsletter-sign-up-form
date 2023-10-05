@@ -1,8 +1,6 @@
-import ILDesktop from "./assets/illustration-sign-up-desktop.svg";
-import ILMobile from "./assets/illustration-sign-up-mobile.svg";
-import IconList from "./assets/icon-list.svg";
 import { useEffect, useState } from "react";
 import Joi from "joi";
+import { ILDesktop, ILMobile, IconList, IconSuccess } from "./assets";
 
 const App = () => {
     const listText = [
@@ -14,6 +12,7 @@ const App = () => {
     const [windowWidth, setWindowWidth] = useState(0);
     const [reqBody, setreqBody] = useState({ email: "" });
     const [error, setError] = useState({});
+    const [isSubmit, setIsSubmit] = useState(false);
 
     const onChange = (key, value) => {
         setreqBody((state) => ({ ...state, [key]: value }));
@@ -41,6 +40,8 @@ const App = () => {
                 const { message, path } = item;
                 setError((state) => ({ ...state, [path[0]]: message }));
             });
+        } else {
+            setIsSubmit(true);
         }
     };
 
@@ -58,46 +59,82 @@ const App = () => {
         <div className="h-screen md:h-screen md:flex justify-center items-center">
             <div className="card bg-white h-screen md:h-fit shadow-xl">
                 <div className="card-body flex flex-row md:flex-nowrap p-0 md:w-full md:p-10 flex-wrap-reverse justify-center items-between md:items-center gap-5">
-                    <div className="px-6">
-                        <h1 className="card-title text-4xl md:text-5xl font-bold text-grey-dark-slate">
-                            Stay updated!{" "}
-                        </h1>
-                        <p className=" font-medium text-grey-dark-slate py-4">
-                            Join 60,000+ product managers receiving monthly {windowWidth >= 768 && <br />}
-                            updates on:
-                        </p>
-                        {listText.map((item) => (
-                            <div key={item.no} className="flex flex-row gap-2 py-1">
-                                <img src={IconList} alt="Album" />
-                                <p className="text-grey-dark-slate font-semibold pl-1"> {item.text}</p>
-                            </div>
-                        ))}
+                    {!isSubmit ? (
+                        <>
+                            <div className="px-6">
+                                <h1 className="card-title text-4xl md:text-5xl font-bold text-grey-dark-slate">
+                                    Stay updated!{" "}
+                                </h1>
+                                <p className=" font-medium text-grey-dark-slate py-4">
+                                    Join 60,000+ product managers receiving monthly {windowWidth >= 768 && <br />}
+                                    updates on:
+                                </p>
+                                {listText.map((item) => (
+                                    <div key={item.no} className="flex flex-row gap-2 py-1">
+                                        <img src={IconList} alt="Album" />
+                                        <p className="text-grey-dark-slate font-semibold pl-1"> {item.text}</p>
+                                    </div>
+                                ))}
 
-                        <div className="form-control w-full mt-5">
-                            <label className="label">
-                                <span className="label-text text-grey-dark-slate font-semibold">Email Address</span>
-                                {error.email && <span className="label-text-alt text-red-500">{error.email}</span>}
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="email@company.com"
-                                value={reqBody.email}
-                                onChange={(e) => onChange("email", e.target.value)}
-                                required
-                                className={`input input-bordered w-full bg-white text-grey-dark-slate border-grey focus:border-grey-dark-slate focus:outline-none mb-5 ${
-                                    error.email && "border-red-400 bg-red-100 text-red-500"
-                                }`}
-                            />
-                            <button
-                                onClick={() => onSubmit()}
-                                className="btn btn-primary bg-grey-dark-slate border-grey-dark-slate hover:bg-grey-charcoal hover:border-grey-dark-slate  text-white">
-                                Subscribe to monthly newsletter
-                            </button>
-                        </div>
-                    </div>
-                    <div className="w-full md:w-fit">
-                        <img src={windowWidth <= 768 ? ILMobile : ILDesktop} alt="Album" className="w-full" />
-                    </div>
+                                <div className="form-control w-full mt-5">
+                                    <label className="label">
+                                        <span className="label-text text-grey-dark-slate font-semibold">
+                                            Email Address
+                                        </span>
+                                        {error.email && (
+                                            <span className="label-text-alt text-red-500">{error.email}</span>
+                                        )}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="email@company.com"
+                                        value={reqBody.email}
+                                        onChange={(e) => onChange("email", e.target.value)}
+                                        required
+                                        className={`input input-bordered w-full bg-white text-grey-dark-slate border-grey focus:border-grey-dark-slate focus:outline-none mb-5 ${
+                                            error.email && "border-red-400 bg-red-100 text-red-500"
+                                        }`}
+                                    />
+                                    <button
+                                        onClick={() => onSubmit()}
+                                        className="btn btn-primary bg-grey-dark-slate border-grey-dark-slate hover:bg-grey-charcoal hover:border-grey-dark-slate  text-white">
+                                        Subscribe to monthly newsletter
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="w-full md:w-fit">
+                                <img src={windowWidth <= 768 ? ILMobile : ILDesktop} alt="Album" className="w-full" />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="flex flex-col justify-between align-middle py-5">
+                                <div className="flex flex-col justify-center align-middle h-full">
+                                    <div>
+                                        <img src={IconSuccess} alt="Album" />
+                                    </div>
+                                    <div>
+                                        <h1 className="card-title text-4xl md:text-4xl font-bold text-grey-dark-slate mt-4">
+                                            Thanks for <br />
+                                            subscribing!
+                                        </h1>
+                                        <p className=" font-medium text-grey-dark-slate py-5">
+                                            A confirmation email has been sent to <br />
+                                            <span className="font-bold">{reqBody.email}</span>. Please open it and click{" "}
+                                            <br /> the button inside to confirm your subscription
+                                        </p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={() => setIsSubmit(false)}
+                                        className="w-full btn btn-primary bg-grey-dark-slate border-grey-dark-slate bg-gradient-to-r hover:from-pink-400 hover:to-orange-400 hover:border-none  text-white">
+                                        Dismiss Message
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
